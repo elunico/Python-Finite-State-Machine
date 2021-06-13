@@ -140,6 +140,10 @@ class Player:
         ...
 ```
 
+You do not have to provide both `from_states` and `to_states`. It is possible to define every transition using only 
+1 of these keyword arguments. Both exist simply to make it easier to express the most natural description of the 
+domain. 
+
 **There are no protections in place if you make a state that is inescapable or one that can never be reached. 
 Note that if you do not decorate a method it will always be callable, but if it is decorated there are no checks for 
 islands or cycles or deadends, that is up to you**
