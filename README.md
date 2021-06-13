@@ -140,6 +140,12 @@ class Player:
         ...
 ```
 
+**There are no protections in place if you make a state that is inescapable or one that can never be reached. 
+Note that if you do not decorate a method it will always be callable, but if it is decorated there are no checks for 
+islands or cycles or deadends, that is up to you**
+
+## Wrapping up 
+
 I believe this implementation is elegant, concise, declarative, and easy to use. 
 
 There is one more thing we can talk about. You can interrogate the machine to find out what methods are valid 
