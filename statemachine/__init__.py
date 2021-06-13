@@ -1,6 +1,6 @@
 
 __all__ = [
-    'Machine', "MachineError", "TransitionMap", "reachable"
+    'Machine', "MachineError", "TransitionMap", "allows_access"
 ]
 
 from statemachine.machine import Machine

@@ -8,7 +8,7 @@ allows for very nice, often magical feeling, syntax around a lot of things. Natu
 nicer to employ dictionaries, and some inference to make the code more pleasant and (hopefully) more self-documenting
 
 ## Explanation 
-The library consists of 3 main items: `Machine`, `MachineError`, and `reachable`.
+The library consists of 3 main items: `Machine`, `MachineError`, and `allow_access`.
 
 `Machine` is a decorator that provides a class with the logic needed to implement a finite state machine. 
 This class can then be used to guard access to particular
@@ -75,7 +75,7 @@ Using this library allows you to have unlimited methods that do not interact or 
 state machine. The state machine will only protect access to calling methods on which you have explicitly chosen 
 to define limitations. 
 
-These limitations are defined using the `reachable` decorator. You 
+These limitations are defined using the `allows_access` decorator. You 
 add this decorator to the methods on the class which interact with the state machine. 
 It accepts 1 keyword argument: an iterable of strings (`Iterable[str]`).
 These strings **must exactly match the names of the states which are valid _source_ states for the particular method
@@ -94,15 +94,15 @@ class Player:
     def __init__(self, video):
         self.video = video
 
-    @reachable(from_states=['pause', 'stop'])
+    @allows_access(from_states=['pause', 'stop'])
     def start(self):
         ...
 
-    @reachable(from_states=['start'])
+    @allows_access(from_states=['start'])
     def pause(self):
         ...
 
-    @reachable(from_states=['start', 'pause', 'stop'])
+    @allows_access(from_states=['start', 'pause', 'stop'])
     def stop(self):
         ...
 ```
@@ -114,6 +114,31 @@ will not only check to make sure we are in an acceptable state, but it will also
 
 In the event that a method call cannot be executed due to the state machine's current state, then a `MachineError`
 is raised and **the current state of the machine is unchanged**
+
+The library also allows you to define a `to_states` parameter. This allows you to define the states that can be 
+*transitioned to* from a paritcular method/state rather than transitioned from. You can also mix and match these
+as you like in the same decorator, but **do not double up `allows_access` decorators on 1 method.
+
+Here is another way of implementing the same logic above
+
+```python
+@Machine(init_state='stop')
+class Player:
+    def __init__(self, video):
+        self.video = video
+
+    @allows_access(from_states=['pause', 'stop'], to_states=['pause'])
+    def start(self):
+        ...
+
+    @allows_access(to_states=['start', 'stop'])
+    def pause(self):
+        ...
+
+    @allows_access(from_states=['start', 'pause', 'stop'])
+    def stop(self):
+        ...
+```
 
 I believe this implementation is elegant, concise, declarative, and easy to use. 
 

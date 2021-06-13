@@ -7,6 +7,7 @@ def Machine(*, init_state: str):
     class _Machine:
         def __init__(self, cls):
             old_new = getattr(cls, '__new__')
+            old_init = getattr(cls, '__init__')
 
             if hasattr(cls, 'find_all_states'):
                 raise TypeError(f'Class {cls.__name__!r} has member `find_all_states` which is overwritten by Machine. '
@@ -17,10 +18,18 @@ def Machine(*, init_state: str):
                 setattr(instance, 'machine', self)
                 return instance
 
+            def __init__(self, *args, **kwargs):
+                for k in dir(self):
+                    v = getattr(self, k)
+                    if hasattr(v, '_machine_do_init_steps'):
+                        v._machine_do_init_steps(self)
+                old_init(self, *args, **kwargs)
+
             def find_all_states(self1, source: str) -> Set[str]:
                 return set(self.transitions[source])
 
             setattr(cls, '__new__', __new__)
+            setattr(cls, '__init__', __init__)
             setattr(cls, 'find_all_states', find_all_states)
             self.current_state = init_state
             self.states: Set[str] = set()

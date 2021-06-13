@@ -1,5 +1,5 @@
 from statemachine import Machine
-from statemachine.reachable import reachable
+from statemachine.allows_access import allows_access
 
 
 @Machine(init_state='stop')
@@ -7,21 +7,20 @@ class Player:
     def __init__(self, video):
         self.video = video
 
-    @reachable(from_states=['pause', 'stop'])
+    @allows_access(from_states=['pause', 'stop'])
     def start(self):
         ...
 
-    @reachable(from_states=['start'])
+    @allows_access(from_states=['start'])
     def pause(self):
         ...
 
-    @reachable(from_states=['start', 'pause', 'stop'])
+    @allows_access(from_states=['start', 'pause', 'stop'])
     def stop(self):
         ...
 
 
 p = Player('some video here')
-
 p.start()
 p.pause()
 p.start()
