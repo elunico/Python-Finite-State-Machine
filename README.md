@@ -150,15 +150,88 @@ You do not have to provide both `from_states` and `to_states`. It is possible to
 1 of these keyword arguments. Both exist simply to make it easier to express the most natural description of the 
 domain. 
 
+Also that any combination of parameters will be used and the transitions between states are the union of all the 
+specified states in all decorators in order of execution. Therefore, there is no precedence. Any rule 
+specified in any decorator will have the same effect and there is no preference or priorty to the `from_states` or `two_states` parameter
+
 **There are no protections in place if you make a state that is inescapable or one that can never be reached. 
 Note that if you do not decorate a method it will always be callable, but if it is decorated there are no checks for 
 islands or cycles or deadends, that is up to you**
 
-## Wrapping up 
+### Extending this example 
+Aside from the declarative nature of this system and the ability to keep state checking logic out of the way of business
+logic, this library really demonstrates its usefulness when adding additional states and functionality. 
 
-I believe this implementation is elegant, concise, declarative, and easy to use. 
+Let's say we want to extend the above example to include the ability to rewind. We will want to add some `rewind()`
+method with the necessary business logic (not shown) to perform the rewind. But we also have to make sure we are in an 
+acceptable state before calling rewind. We are able to `rewind` if we are in the 'pause' state or the 'start' state.
+Furthermore, we are able to go to the 'pause', 'start', and 'stop', state if in the 'rewind' state. 
 
-There is one more thing we can talk about. You can interrogate the machine to find out what methods are valid 
+There are two ways we can implement this change. The first way is to use the same `from_states` parameter on 
+`allows_acces` and retroactively add states to the existing methods, keeping everything consistent. 
+
+```python
+@Machine(init_state='stop')
+class Player:
+    def __init__(self, video):
+        self.video = video
+
+    @allows_access(from_states=['pause', 'stop', 'rewind'])
+    def start(self):
+        ...
+
+    @allows_access(from_states=['start', 'rewind'])
+    def pause(self):
+        ...
+
+    @allows_access(from_states=['start', 'pause', 'stop', 'rewind'])
+    def stop(self):
+        ...
+    
+    @allows_access(from_states=['pause', 'start'])
+    def rewind(self):
+        ...
+```
+
+This has the advantage of remaining consitent. It also can work by adding the business logic for the new state in the 
+method and asking, "in what states can I peform this action?" and filling in the values accordingly. Then, 
+visit every method and ask "can I do this, if I am currently in state X" where X is the new state that is being added.
+
+Alternatively, it is possible to only add information to the program and leave the other states untouched. This will work
+programmatically, but it has the disadvantage of obfuscating the nice declarative nature of the decorators. You can 
+no longer see exactly which states go to a state above the method declaration.
+
+```python
+@Machine(init_state='stop')
+class Player:
+    def __init__(self, video):
+        self.video = video
+
+    @allows_access(from_states=['pause', 'stop'])
+    def start(self):
+        ...
+
+    @allows_access(from_states=['start'])
+    def pause(self):
+        ...
+
+    @allows_access(from_states=['start', 'pause', 'stop'])
+    def stop(self):
+        ...
+    
+    @allows_access(from_states=['pause', 'start'], to_states=['start', 'pause', 'stop'])
+    def rewind(self):
+        ...
+```
+
+The way a new state is implemented is up to you. Either will work equally well in terms of the implementation of the `Machine`
+
+While it is true that it is less clear to read in source when using a mix of `from_states` and `to_states`, you can interrogate instances the class being managed
+(in this case `Player`) to determine the allowed states for transition to and from other states. 
+
+### Determining all Transitions To and From a State
+
+You can interrogate the machine to find out what methods are valid 
 'to' states and valid 'from' states for a given state. When using the `@Machine` decorator
 a method called `get_all_states` is injected into your decorated class. This method accepts a single `str` argument which is the 
 name of the state/method you are interested in. It returns a `dict` object with two keys: the 'from_states' key 
@@ -169,5 +242,14 @@ You can say something like
 
 ```python
 p = Player()
-p.get_all_states('start') # returns {'to_states': {'pause', 'stop'}, 'from_states': {'pause', 'stop'}}
+p.get_all_states('start') 
+# returns { 'to_states': {'pause', 'stop', 'rewind'}, 
+#           'from_states': {'pause', 'stop', 'rewind'} }
 ```
+
+## Wrapping up 
+
+I believe this implementation is elegant, concise, declarative, and easy to use. The library
+is very young and new, and I am currently the only person maintaining it. If you find any bugs 
+or issues or features that would be useful that are not present, please see the `CONTRIBUTING.md`
+document and open an issue or a pull request. 
