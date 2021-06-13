@@ -9,7 +9,9 @@ nicer to employ dictionaries, and some inference to make the code more pleasant 
 
 ## Find on pypi
 
-This project uses [This template](https://github.com/fastai/pypi_template) to create a pypi package
+This project uses [this template](https://github.com/fastai/pypi_template) to create a pypi package. 
+
+You can find the project [here](https://pypi.org/project/statemachine-elunico/) and install it using `pip install statemachine-elunico` and then import it with `import statemachine`
 
 ## Explanation 
 The library consists of 3 main items: `Machine`, `MachineError`, and `allow_access`.
