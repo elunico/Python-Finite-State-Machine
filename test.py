@@ -32,4 +32,6 @@ p.stop()
 p.stop()
 p.stop()
 
-print(p.find_all_states('start'))
+print(p.get_all_states('start'))
+print(p.get_all_states('stop'))
+print(p.get_all_states('pause'))

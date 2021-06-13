@@ -153,15 +153,15 @@ islands or cycles or deadends, that is up to you**
 I believe this implementation is elegant, concise, declarative, and easy to use. 
 
 There is one more thing we can talk about. You can interrogate the machine to find out what methods are valid 
-next states for a given state. Notice, that the declarative nature of this framework, allows you to easily see 
-what states are valid *sources* for any state/method, but it does not given an easy way to find out what states are 
-valid *destinations* (also called next states). However, an instance of a class is injected to the instance of classes 
-annotated with `@Machine` that contains a `find_next_states` method which takes a single `str` argument which is the 
-name of the state to start in and returns a `set` of states that are valid next states for that state. 
+'to' states and valid 'from' states for a given state. When using the `@Machine` decorator
+a method called `get_all_states` is injected into your decorated class. This method accepts a single `str` argument which is the 
+name of the state/method you are interested in. It returns a `dict` object with two keys: the 'from_states' key 
+maps to a set of strings that are all the states you may transition to the given state from and the 'to_states' 
+key which maps to a set of all the valid next states for that state. 
 
 You can say something like
 
 ```python
 p = Player()
-p.find_next_states('start') # returns {'pause', 'stop'}
+p.get_all_states('start') # returns {'to_states': {'pause', 'stop'}, 'from_states': {'pause', 'stop'}}
 ```

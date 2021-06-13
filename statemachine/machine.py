@@ -25,15 +25,16 @@ def Machine(*, init_state: str):
                         v._machine_do_init_steps(self)
                 old_init(self, *args, **kwargs)
 
-            def find_all_states(self1, source: str) -> Set[str]:
-                return set(self.transitions[source])
+            def get_all_states(self1, source: str) -> dict[str, Set[str]]:
+                return {'to_states': set(self.transitions[source]), 'from_states': set(self.rtransitions[source])}
 
             setattr(cls, '__new__', __new__)
             setattr(cls, '__init__', __init__)
-            setattr(cls, 'find_all_states', find_all_states)
+            setattr(cls, 'get_all_states', get_all_states)
             self.current_state = init_state
             self.states: Set[str] = set()
             self.transitions: TransitionMap = TransitionMap()
+            self.rtransitions: TransitionMap = TransitionMap()
 
         def _add_state(self, state: str):
             if not state in self.states:
@@ -45,6 +46,11 @@ def Machine(*, init_state: str):
             st = self.transitions.get(source, set())
             st.add(destination)
             self.transitions[source] = st
+
+            # reverse transition map for lookup
+            rst = self.rtransitions.get(destination, set())
+            rst.add(source)
+            self.rtransitions[destination] = rst
 
     def decorator(cls):
         setattr(cls, 'machine', _Machine(cls))
