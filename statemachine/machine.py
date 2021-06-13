@@ -1,4 +1,4 @@
-from typing import Set
+from typing import Set, Dict
 
 from statemachine.transitions import TransitionMap
 
@@ -9,23 +9,26 @@ def Machine(*, init_state: str):
             old_new = getattr(cls, '__new__')
             old_init = getattr(cls, '__init__')
 
-            if hasattr(cls, 'find_all_states'):
-                raise TypeError(f'Class {cls.__name__!r} has member `find_all_states` which is overwritten by Machine. '
-                                f'Rename this method to something else to use @Machine')
+            conflict_msg = 'Class {!r} has member `{!r}` which is overwritten by Machine. ' \
+                           f'Rename this method to something else to use @Machine'
+
+            for i in ['find_all_states', 'machine', 'get_all_states']:
+                if hasattr(cls, i):
+                    raise TypeError(conflict_msg.format(repr(cls.__name__), repr(i)))
 
             def __new__(*args, **kwargs):
                 instance = old_new(cls)
                 setattr(instance, 'machine', self)
                 return instance
 
-            def __init__(self, *args, **kwargs):
-                for k in dir(self):
-                    v = getattr(self, k)
+            def __init__(cls_self, *args, **kwargs):
+                for k in dir(cls_self):
+                    v = getattr(cls_self, k)
                     if hasattr(v, '_machine_do_init_steps'):
-                        v._machine_do_init_steps(self)
-                old_init(self, *args, **kwargs)
+                        v._machine_do_init_steps(cls_self)
+                old_init(cls_self, *args, **kwargs)
 
-            def get_all_states(self1, source: str) -> dict[str, Set[str]]:
+            def get_all_states(cls_self, source: str) -> Dict[str, Set[str]]:
                 return {'to_states': set(self.transitions[source]), 'from_states': set(self.rtransitions[source])}
 
             setattr(cls, '__new__', __new__)

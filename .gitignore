@@ -2,3 +2,7 @@
 .vscode
 venv
 __pycache__/
+statemachine_elunico.egg-info/
+build/
+dist/
+.DS_Store

@@ -7,6 +7,10 @@ One of the nice things about Python is its dynamism. This can be a real struggle
 allows for very nice, often magical feeling, syntax around a lot of things. Naturally, rather than passing large, *in situ* lists and dictionaries, I thought it would be 
 nicer to employ dictionaries, and some inference to make the code more pleasant and (hopefully) more self-documenting
 
+## Find on pypi
+
+This project uses [This template](https://github.com/fastai/pypi_template) to create a pypi package
+
 ## Explanation 
 The library consists of 3 main items: `Machine`, `MachineError`, and `allow_access`.
 
