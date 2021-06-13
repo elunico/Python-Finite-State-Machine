@@ -13,7 +13,7 @@ def reachable(*, from_states: Iterable[str]):
             [machine._add_state(i) for i in from_states]
             [machine._add_transition(i, fn.__name__) for i in from_states]
             if not any(i == machine.current_state for i in from_states):
-                raise MachineError("No such move")
+                raise MachineError(f"Transition from state {machine.current_state!r} to {fn.__name__!r} is illegal")
             machine.current_state = fn.__name__
             assert fn.__name__ in machine.states
             return fn(self, *args, **kwargs)
