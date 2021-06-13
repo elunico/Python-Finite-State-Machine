@@ -15,7 +15,7 @@ class Player:
     def pause(self):
         ...
 
-    @reachable(from_states=['start', 'pause'])
+    @reachable(from_states=['start', 'pause', 'stop'])
     def stop(self):
         ...
 
@@ -29,5 +29,8 @@ p.stop()
 p.start()
 p.stop()
 p.start()
+p.stop()
+p.stop()
+p.stop()
 
 print(p.find_all_states('start'))

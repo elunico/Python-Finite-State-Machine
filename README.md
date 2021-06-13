@@ -23,7 +23,7 @@ Watching the talk given in the above link and looking at the example file might 
 ### Explanation through Example
 
 Briefly, imagine you have a music player that be be started, stopped, and paused and so has the methods `start`, `stop`, and `pause`.
-You want to be able to pause while started but not stopped. You want to be able to stop while either started or paused. Finally,
+You want to be able to pause while started but not stopped. You want to be able to stop while either started, paused, or stopped. Finally,
 you want to be able to start while stopped or paused. You begin in the stopped state.
 
 Immediately, you might be able to see there is a fair bit going on, and we only have 3 states and a few rules. 
@@ -85,6 +85,9 @@ state and are used to set the current state after a method call. Therefore, it i
 the methods in the decorator. We will now see the class example from above, but fully written out to implement 
 the state checking logic described in the beginning of the article. 
 
+Note that because you are only passing strings into the decorators, it is trivially easy to allow transitions 
+to the state being defined by the method by simply including the name of the method in the list of valid 'from states'
+
 ```python
 @Machine(init_state='stop')
 class Player:
@@ -99,7 +102,7 @@ class Player:
     def pause(self):
         ...
 
-    @reachable(from_states=['start', 'pause'])
+    @reachable(from_states=['start', 'pause', 'stop'])
     def stop(self):
         ...
 ```
