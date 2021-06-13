@@ -1,5 +1,5 @@
 from statemachine import Machine
-from statemachine.allows_access import allows_access
+from statemachine.accesscontrol import allows_access
 
 
 @Machine(init_state='stop')

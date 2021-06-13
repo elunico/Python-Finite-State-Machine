@@ -1,7 +1,7 @@
 import functools
 from typing import Iterable
 
-from statemachine import MachineError
+from statemachine.machineerror import MachineError
 
 
 def allows_access(*, from_states: Iterable[str] = None, to_states: Iterable[str] = None):
