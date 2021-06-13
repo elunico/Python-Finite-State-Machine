@@ -14,7 +14,7 @@ This project uses [this template](https://github.com/fastai/pypi_template) to cr
 You can find the project [here](https://pypi.org/project/statemachine-elunico/) and install it using `pip install statemachine-elunico` and then import it with `import statemachine`
 
 ## Explanation 
-The library consists of 3 main items: `Machine`, `MachineError`, and `allow_access`.
+The library consists of 3 main items: `Machine`, `MachineError`, and `allows_access`.
 
 `Machine` is a decorator that provides a class with the logic needed to implement a finite state machine. 
 This class can then be used to guard access to particular
