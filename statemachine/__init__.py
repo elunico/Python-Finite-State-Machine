@@ -7,3 +7,4 @@ from statemachine.accesscontrol import allows_access
 from statemachine.machine import Machine
 from statemachine.machineerror import MachineError
 from statemachine.transitions import TransitionMap
+from statemachine.accesscontrol import allows_access

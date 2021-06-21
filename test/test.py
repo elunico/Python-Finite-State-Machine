@@ -1,5 +1,6 @@
 from statemachine import Machine
 from statemachine.accesscontrol import allows_access
+from statemachine.machine import has_machine
 
 
 @Machine(init_state='stop')
@@ -35,3 +36,4 @@ p.stop()
 print(p.get_all_states('start'))
 print(p.get_all_states('stop'))
 print(p.get_all_states('pause'))
+print(has_machine(p))

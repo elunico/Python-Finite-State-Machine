@@ -18,7 +18,7 @@ def Machine(*, init_state: str):
 
             def __new__(*args, **kwargs):
                 instance = old_new(cls)
-                setattr(instance, 'machine', self)
+                setattr(instance, 'machine_', self)
                 return instance
 
             def __init__(cls_self, *args, **kwargs):
@@ -34,6 +34,7 @@ def Machine(*, init_state: str):
             setattr(cls, '__new__', __new__)
             setattr(cls, '__init__', __init__)
             setattr(cls, 'get_all_states', get_all_states)
+            setattr(cls, '_Machine_is_machine_guarded', True)
             self.current_state = init_state
             self.states: Set[str] = set()
             self.transitions: TransitionMap = TransitionMap()
@@ -60,3 +61,7 @@ def Machine(*, init_state: str):
         return cls
 
     return decorator
+
+
+def has_machine(instance):
+    return hasattr(instance, '_Machine_is_machine_guarded')

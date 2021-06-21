@@ -15,10 +15,12 @@ def allows_access(*, from_states: Iterable[str] = None, to_states: Iterable[str]
         def do_instance(self):
             machine = self.machine
             machine._add_state(fn.__name__)
-            [machine._add_state(i) for i in from_states]
-            [machine._add_state(i) for i in to_states]
-            [machine._add_transition(i, fn.__name__) for i in from_states]
-            [machine._add_transition(fn.__name__, i) for i in to_states]
+            for f in from_states:
+                machine._add_state(f)
+                machine._add_transition(f, fn.__name__)
+            for t in to_states:
+                machine._add_state(t)
+                machine._add_transition(fn.__name__, t)
 
         @functools.wraps(fn)
         def wrapper(self, *args, **kwargs):
