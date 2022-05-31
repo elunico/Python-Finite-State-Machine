@@ -9,10 +9,11 @@ def Machine(*, init_state: str):
             old_new = getattr(cls, '__new__')
             old_init = getattr(cls, '__init__')
 
-            conflict_msg = 'Class {!r} has member `{!r}` which is overwritten by Machine. ' \
-                           f'Rename this method to something else to use @Machine'
+            conflict_msg = 'Class {} has member {} which is overwritten by @Machine. ' \
+                           'Rename this method to something else to use @Machine'
 
-            for i in ['find_all_states', 'machine', 'get_all_states']:
+            for i in ['get_all_states', 'machine', 'machine_', '_machine_do_init_steps',
+                      '_Machine_is_machine_guarded']:
                 if hasattr(cls, i):
                     raise TypeError(conflict_msg.format(repr(cls.__name__), repr(i)))
 
@@ -22,6 +23,7 @@ def Machine(*, init_state: str):
                 return instance
 
             def __init__(cls_self, *args, **kwargs):
+
                 for k in dir(cls_self):
                     v = getattr(cls_self, k)
                     if hasattr(v, '_machine_do_init_steps'):
